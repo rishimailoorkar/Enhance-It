@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhance-It - AI Image Enhancement</title>
+    <meta name="description" content="Transform your low-resolution images into stunning high-quality photos with AI-powered enhancement">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+  document.querySelector('form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const fileInput = document.querySelector('input[type="file"]');
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    const response = await fetch('/', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+    const enhancedImageURL = `/results/${result.filename}`;
+
+    document.getElementById('result').innerHTML = `
+      <h3>Enhanced Image:</h3>
+      <img src="${enhancedImageURL}" alt="Enhanced" style="max-width: 100%; border-radius: 8px;">
+      <a href="${enhancedImageURL}" download class="btn">Download</a>
+    `;
+  });
+</script>
+
+<div id="result"></div>
+
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <!-- Header -->
+    <header class="backdrop-blur-md bg-white/80 border-b border-white/30 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                        <img src="{{ url_for('static', filename='logo.png') }}" alt="Enhance-It Logo" class="w-7 h-7 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg class="w-7 h-7 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            Enhance-It
+                        </h1>
+                        <p class="text-sm text-gray-600">AI-Powered Image Enhancement</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                    </svg>
+                    <span>Powered by Real-ESRGAN</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Hero Section -->
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                Transform Your Images with AI
+            </h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Upload any low-resolution image and watch our advanced AI enhance it to stunning 4K quality. 
+                Powered by Real-ESRGAN technology for professional-grade results.
+            </p>
+        </div>
+
+        <!-- Upload Form -->
+        <div class="max-w-2xl mx-auto">
+            <form method="POST" enctype="multipart/form-data" id="upload-form">
+                <div class="backdrop-blur-sm bg-white/70 border-2 border-dashed border-gray-300 rounded-3xl p-12 md:p-16 transition-all duration-300 hover:border-gray-400 hover:bg-white/80" id="upload-box">
+                    <div class="text-center">
+                        <div class="w-20 h-20 mx-auto mb-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-lg">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                        </div>
+                        
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+                            Drop your image here or click to browse
+                        </h3>
+                        <p class="text-gray-600 mb-8 text-lg">
+                            Supports JPG, PNG, and WebP files up to 50MB
+                        </p>
+                        
+                        <input type="file" name="file" accept="image/jpeg,image/png,image/webp" required class="hidden" id="file-input">
+                        <button type="button" onclick="document.getElementById('file-input').click()" class="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-2xl hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl" id="upload-btn">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Choose Image</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preview Section (Hidden by default) -->
+                <div id="preview-section" class="mt-8 hidden">
+                    <div class="backdrop-blur-sm bg-white/70 rounded-3xl p-8 border border-white/30 shadow-lg">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">Preview Your Image</h3>
+                        <div class="relative overflow-hidden rounded-2xl bg-gray-100 mb-6">
+                            <img id="preview-image" class="w-full h-auto object-contain max-h-96" alt="Preview">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 text-sm text-gray-600 mb-8">
+                            <div>
+                                <span class="font-medium">Size:</span> <span id="file-size"></span>
+                            </div>
+                            <div>
+                                <span class="font-medium">Type:</span> <span id="file-type"></span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button type="button" onclick="changeImage()" class="flex items-center justify-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                <span>Change Image</span>
+                            </button>
+                            
+                            <button type="submit" class="flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg" id="enhance-btn">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                                <span>Enhance Image</span>
+                            </button>
+                            
+                            <button type="button" onclick="removeAll()" class="flex items-center justify-center space-x-2 px-6 py-3 bg-red-100 text-red-700 font-medium rounded-xl hover:bg-red-200 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                                <span>Remove All</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- AI Research Lab Section -->
+    <section class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-8">
+                <div class="w-16 h-16 mx-auto mb-6 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-bold mb-4">Developed by AI Research Lab</h3>
+                <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                    This project is proudly created under the AI Research Lab of QD&Co, 
+                    pushing the boundaries of artificial intelligence and computer vision technology.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mt-12">
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto mb-4 bg-white/20 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Advanced AI Models</h4>
+                    <p class="text-blue-100">Utilizing state-of-the-art Real-ESRGAN technology</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto mb-4 bg-white/20 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Secure Processing</h4>
+                    <p class="text-blue-100">Your images are processed securely and privately</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-12 h-12 mx-auto mb-4 bg-white/20 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2">Lightning Fast</h4>
+                    <p class="text-blue-100">Optimized for speed without compromising quality</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <!-- Company Info -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-bold">Enhance-It</span>
+                    </div>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        Transform your images with cutting-edge AI technology. Enhance-It uses advanced machine learning 
+                        models to upscale and improve image quality while preserving important details and textures.
+                    </p>
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-4">
+                        <p class="text-sm font-medium">
+                            🔬 Created under the AI Research Lab of QD&Co
+                        </p>
+                        <p class="text-xs text-blue-200 mt-1">
+                            Advancing the future of artificial intelligence
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Technology -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Technology</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Real-ESRGAN AI Model</li>
+                        <li>Super Resolution</li>
+                        <li>Image Enhancement</li>
+                        <li>Deep Learning</li>
+                        <li>Computer Vision</li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Support</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Report Issues</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Section -->
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-6 text-sm text-gray-400">
+                        <p>© 2025 Enhance-It | Built by AI Research Lab, QD&Co</p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                            <a href="#" class="hover:text-white transition-colors">License</a>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // File input handling
+        const fileInput = document.getElementById('file-input');
+        const previewSection = document.getElementById('preview-section');
+        const previewImage = document.getElementById('preview-image');
+        const uploadBox = document.getElementById('upload-box');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                showPreview(file);
+            }
+        });
+
+        // Drag and drop functionality
+        uploadBox.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadBox.classList.add('border-blue-400', 'bg-blue-50/70', 'scale-105');
+        });
+
+        uploadBox.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('border-blue-400', 'bg-blue-50/70', 'scale-105');
+        });
+
+        uploadBox.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadBox.classList.remove('border-blue-400', 'bg-blue-50/70', 'scale-105');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                showPreview(files[0]);
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                document.getElementById('file-size').textContent = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+                document.getElementById('file-type').textContent = file.type;
+                previewSection.classList.remove('hidden');
+                uploadBox.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function changeImage() {
+            fileInput.click();
+        }
+
+        function removeAll() {
+            fileInput.value = '';
+            previewSection.classList.add('hidden');
+            uploadBox.style.display = 'block';
+        }
+
+        // Form submission with loading state
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+            const enhanceBtn = document.getElementById('enhance-btn');
+            enhanceBtn.innerHTML = `
+                <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Enhancing...</span>
+            `;
+            enhanceBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>

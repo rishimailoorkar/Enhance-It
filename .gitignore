@@ -1,0 +1,49 @@
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Virtual Environment
+venv/
+
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Flask Specific
+instance/
+.env
+.env.*
+
+# AI Model Weights & Results
+*.pt
+*.pth
+*.h5
+static/results/
+uploads/
+
+# Node Modules (React Frontend)
+node_modules/
+dist/
+build/
+
+# System & Editor Files
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS or temporary files
+*.tmp
+*.bak
