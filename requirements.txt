@@ -5,3 +5,4 @@ torchvision==0.22.0
 opencv-python-headless==4.5.5.62
 numpy
 pillow
+git+https://github.com/xinntao/BasicSR.git
