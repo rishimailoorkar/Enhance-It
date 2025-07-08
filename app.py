@@ -4,11 +4,11 @@ import sys
 import subprocess
 import uuid
 from flask_cors import CORS
-import subprocess
 
 try:
     import basicsr
 except ImportError:
+    import subprocess, sys
     subprocess.call([sys.executable, "-m", "pip", "install", "git+https://github.com/xinntao/BasicSR.git"])
 
 
