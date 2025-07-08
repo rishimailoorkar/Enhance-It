@@ -1,15 +1,13 @@
 from flask import Flask, request, jsonify, send_from_directory
 import os
 import sys
-import subprocess
 import uuid
 from flask_cors import CORS
 
-try:
-    import basicsr
-except ImportError:
-    import subprocess, sys
-    subprocess.call([sys.executable, "-m", "pip", "install", "git+https://github.com/xinntao/BasicSR.git"])
+sys.path.append('./Real-ESRGAN')
+
+from basicsr.archs.rrdbnet_arch import RRDBNet
+from realesrgan import RealESRGANer
 
 
 app = Flask(__name__)
